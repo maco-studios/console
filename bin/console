@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Copyright (c) 2025 Marcos "Marcão" Aurelio
+ *
+ * @see https://github.com/maco-studios/console
+ */
+
+$path = dirname($_SERVER['argv'][0]);
+$root = dirname(realpath($path));
+
+if (!file_exists($root . '/app/Mage.php')) {
+    echo "Error: Cannot find Mage.php. Please ensure this script is located in .modules/console/bin/console within a Magento installation.\n";
+    exit(1);
+}
+
+
+require_once $root . '/app/Mage.php';
+
+require_once $root . '/vendor/autoload.php';
+
+try {
+    Mage::app('admin');
+    $consoleClass = (string) Mage::getConfig()->getNode('global/console/class');
+    $console = new $consoleClass();
+    $console->run();
+} catch (Exception $e) {
+    // If database connection fails, try to initialize without it
+    // This allows commands to work even when database is unavailable
+    if (strpos($e->getMessage(), 'getaddrinfo') !== false || strpos($e->getMessage(), 'Connection refused') !== false) {
+        // Initialize minimal Mage environment
+        Mage::setRoot();
+        Mage::register('_app_default_store_id', Mage_Core_Model_App::ADMIN_STORE_ID);
+
+        // We'll handle cache operations that don't require DB separately
+        echo "Warning: Database connection failed. Some cache operations may not work.\n";
+    } else {
+        throw $e;
+    }
+}
