@@ -11,12 +11,6 @@
         "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.87"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../console"
-        }
-    ],
     "config": {
         "allow-plugins": {
             "ergebnis/composer-normalize": true
