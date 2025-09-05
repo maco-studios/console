@@ -1,0 +1,40 @@
+{
+    "name": "maco-studios/console",
+    "type": "magento-module",
+    "version": "1.0.0",
+    "require": {
+        "symfony/console": "^5"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.48",
+        "ergebnis/license": "^2.7",
+        "fakerphp/faker": "^1.24",
+        "friendsofphp/php-cs-fixer": "^3.87"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../console"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        }
+    },
+    "extra": {
+        "composer-normalize": {
+            "indent-size": 4,
+            "indent-style": "space"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@composer normalize"
+        ],
+        "post-update-cmd": [
+            "@composer normalize"
+        ],
+        "cs:fix": "php-cs-fixer fix"
+    }
+}
