@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Maco_Console>
+            <version>1.0.0</version>
+        </Maco_Console>
+    </modules>
+
+    <global>
+        <console>
+            <class>Maco_Console_Application</class>
+        </console>
+
+        <models>
+            <maco_console>
+                <class>Maco_Console_Model</class>
+            </maco_console>
+        </models>
+
+        <helpers>
+            <maco_console>
+                <class>Maco_Console_Helper</class>
+            </maco_console>
+        </helpers>
+
+        <!-- Console Commands Configuration -->
+        <console>
+            <commands>
+                <!-- Cache Commands -->
+                <cache_list>
+                    <class>Maco_Console_Command_Cache_ListCommand</class>
+                    <name>cache:list</name>
+                    <description>List all available cache types</description>
+                </cache_list>
+                <cache_flush>
+                    <class>Maco_Console_Command_Cache_FlushCommand</class>
+                    <name>cache:flush</name>
+                    <description>Flush cache storage</description>
+                </cache_flush>
+                <cache_status>
+                    <class>Maco_Console_Command_Cache_StatusCommand</class>
+                    <name>cache:status</name>
+                    <description>Show cache status for all types</description>
+                </cache_status>
+                <cache_clean>
+                    <class>Maco_Console_Command_Cache_CleanCommand</class>
+                    <name>cache:clean</name>
+                    <description>Clean specified cache types</description>
+                </cache_clean>
+                <cache_enable>
+                    <class>Maco_Console_Command_Cache_EnableCommand</class>
+                    <name>cache:enable</name>
+                    <description>Enable specified cache types</description>
+                </cache_enable>
+                <cache_disable>
+                    <class>Maco_Console_Command_Cache_DisableCommand</class>
+                    <name>cache:disable</name>
+                    <description>Disable specified cache types</description>
+                </cache_disable>
+
+                <!-- Seeder Commands -->
+                <seeder_seed>
+                    <class>Maco_Console_Command_Seeder_SeedCommand</class>
+                    <name>seeder:seed</name>
+                    <description>Run database seeders</description>
+                </seeder_seed>
+                <seeder_make>
+                    <class>Maco_Console_Command_Seeder_MakeCommand</class>
+                    <name>seeder:make</name>
+                    <description>Create a new seeder class</description>
+                </seeder_make>
+                <seeder_list>
+                    <class>Maco_Console_Command_Seeder_ListCommand</class>
+                    <name>seeder:list</name>
+                    <description>List all available seeders</description>
+                </seeder_list>
+
+                <!-- Indexer Commands -->
+                <indexer_status>
+                    <class>Maco_Console_Command_Indexer_StatusCommand</class>
+                    <name>indexer:status</name>
+                    <description>Show status of indexers</description>
+                </indexer_status>
+                <indexer_show_mode>
+                    <class>Maco_Console_Command_Indexer_ShowModeCommand</class>
+                    <name>indexer:show-mode</name>
+                    <description>Show mode of indexers</description>
+                </indexer_show_mode>
+                <indexer_set_mode>
+                    <class>Maco_Console_Command_Indexer_SetModeCommand</class>
+                    <name>indexer:set-mode</name>
+                    <description>Set mode of indexers</description>
+                </indexer_set_mode>
+                <indexer_info>
+                    <class>Maco_Console_Command_Indexer_InfoCommand</class>
+                    <name>indexer:info</name>
+                    <description>Show information about indexers</description>
+                </indexer_info>
+                <indexer_reindex>
+                    <class>Maco_Console_Command_Indexer_ReindexCommand</class>
+                    <name>indexer:reindex</name>
+                    <description>Reindex data for indexers</description>
+                </indexer_reindex>
+                <indexer_reset>
+                    <class>Maco_Console_Command_Indexer_ResetCommand</class>
+                    <name>indexer:reset</name>
+                    <description>Reset indexers</description>
+                </indexer_reset>
+                <indexer_invalidate>
+                    <class>Maco_Console_Command_Indexer_InvalidateCommand</class>
+                    <name>indexer:invalidate</name>
+                    <description>Mark indexers as invalid</description>
+                </indexer_invalidate>
+            </commands>
+        </console>
+    </global>
+</config>
