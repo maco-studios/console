@@ -1,0 +1,3 @@
+app/code/community/Maco/Console/ app/code/community/Maco/Console/
+bin/console bin/console
+app/etc/modules/Maco_Console.xml app/etc/modules/Maco_Console.xml
