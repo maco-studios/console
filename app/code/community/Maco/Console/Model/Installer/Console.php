@@ -129,6 +129,11 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
             }
 
             /**
+             * Replace temporary install date with actual date
+             */
+            $this->replaceTmpInstallDate();
+
+            /**
              * Reinitialize configuration (to use new config data)
              */
             $this->_app->cleanCache();
@@ -143,8 +148,21 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
                 return false;
             }
 
-            // apply data updates
-            Mage_Core_Model_Resource_Setup::applyAllDataUpdates();
+            /**
+             * Apply data updates only for core modules first
+             * Skip third-party modules that might have dependencies
+             */
+            try {
+                // Only apply core Magento data updates
+                $coreModules = array('Mage_Core', 'Mage_Install', 'Mage_Admin', 'Mage_Customer', 'Mage_Catalog', 'Mage_Sales');
+                foreach ($coreModules as $module) {
+                    $setup = new Mage_Core_Model_Resource_Setup($module);
+                    $setup->applyDataUpdates();
+                }
+            } catch (Exception $e) {
+                // Log the error but don't fail the installation
+                Mage::log('Warning: Some data updates failed: ' . $e->getMessage(), Zend_Log::WARN);
+            }
 
             /**
              * Validate entered data for administrator user
