@@ -47,7 +47,7 @@ abstract class Maco_Console_Command_Abstract extends Command
     {
         try {
             // Initialize Magento application
-            $this->_app = Mage::app('admin');
+            $this->_app = Mage::app('default');
             $this->_store = Mage::app()->getStore();
             $this->_website = Mage::app()->getWebsite();
 
