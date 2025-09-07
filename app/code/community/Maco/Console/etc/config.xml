@@ -15,6 +15,11 @@
             <maco_console>
                 <class>Maco_Console_Model</class>
             </maco_console>
+            <install>
+                <rewrite>
+                    <installer_console>Maco_Console_Model_Installer_Console</installer_console>
+                </rewrite>
+            </install>
         </models>
 
         <helpers>
@@ -111,6 +116,23 @@
                     <name>indexer:invalidate</name>
                     <description>Mark indexers as invalid</description>
                 </indexer_invalidate>
+
+                <!-- Install Commands -->
+                <install_run>
+                    <class>Maco_Console_Command_Install_InstallCommand</class>
+                    <name>install:run</name>
+                    <description>Install Magento using console interface</description>
+                </install_run>
+                <install_status>
+                    <class>Maco_Console_Command_Install_StatusCommand</class>
+                    <name>install:status</name>
+                    <description>Check Magento installation status</description>
+                </install_status>
+                <install_options>
+                    <class>Maco_Console_Command_Install_OptionsCommand</class>
+                    <name>install:options</name>
+                    <description>Display available installation options</description>
+                </install_options>
             </commands>
         </console>
     </global>
