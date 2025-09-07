@@ -67,6 +67,11 @@ class Maco_Console_Application extends \Symfony\Component\Console\Application
             $commands[] = new Maco_Console_Command_Seeder_SeedCommand();
             $commands[] = new Maco_Console_Command_Seeder_MakeCommand();
             $commands[] = new Maco_Console_Command_Seeder_ListCommand();
+
+            // Add install commands
+            $commands[] = new Maco_Console_Command_Install_InstallCommand();
+            $commands[] = new Maco_Console_Command_Install_StatusCommand();
+            $commands[] = new Maco_Console_Command_Install_OptionsCommand();
         } catch (Exception $e) {
             Mage::log('Error loading fallback commands: ' . $e->getMessage(), Zend_Log::ERR, 'console.log');
         }
