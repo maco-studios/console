@@ -31,7 +31,12 @@ class Maco_Console_Model_Installer_Config extends Mage_Install_Model_Installer_A
 
     public function __construct()
     {
-        $this->_envConfigFile = Mage::getBaseDir('etc') . DS . 'env.php';
+        $env = getenv('APP_ENV');
+        if ($env === 'testing') {
+            $this->_envConfigFile = Mage::getBaseDir('etc') . DS . 'env.test.php';
+        } else {
+            $this->_envConfigFile = Mage::getBaseDir('etc') . DS . 'env.php';
+        }
     }
 
     public function setConfigData($data)
