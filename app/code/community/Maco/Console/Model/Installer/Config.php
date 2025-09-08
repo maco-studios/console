@@ -133,7 +133,7 @@ class Maco_Console_Model_Installer_Config extends Mage_Install_Model_Installer_A
                             'password' => $data['db_pass'] ?? '',
                             'dbname' => $data['db_name'],
                             'initStatements' => 'SET NAMES utf8',
-                            'model' => $data['db_model'] ?? 'mysql4',
+                            'model' => $data['db_model'] !== '' ? $data['db_model'] : 'mysql4',
                             'type' => 'pdo_mysql',
                             'pdoType' => '',
                             'active' => 1

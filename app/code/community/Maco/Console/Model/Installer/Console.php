@@ -159,9 +159,20 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
                     $setup = new Mage_Core_Model_Resource_Setup($module);
                     $setup->applyDataUpdates();
                 }
+
+                // Ensure admin role exists after data updates
+                $this->ensureAdminRoleExists();
+
             } catch (Exception $e) {
                 // Log the error but don't fail the installation
                 Mage::log('Warning: Some data updates failed: ' . $e->getMessage(), Zend_Log::WARN);
+
+                // Try to ensure admin role exists even if data updates failed
+                try {
+                    $this->ensureAdminRoleExists();
+                } catch (Exception $roleException) {
+                    Mage::log('Warning: Could not ensure admin role exists: ' . $roleException->getMessage(), Zend_Log::WARN);
+                }
             }
 
             /**
@@ -177,7 +188,7 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
              * Prepare encryption key and validate it
              */
             $encryptionKey = empty($this->_args['encryption_key'])
-                ? md5(Mage::helper('core')->getRandomString(10))
+                ? md5(uniqid(rand(), true))
                 : $this->_args['encryption_key'];
             $this->_getDataModel()->setEncryptionKey($encryptionKey);
             $installer->validateEncryptionKey($encryptionKey);
@@ -194,6 +205,11 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
             if ($this->hasErrors()) {
                 return false;
             }
+
+            /**
+             * Ensure the admin user has the correct role assigned
+             */
+            $this->ensureAdminUserRole($user);
 
             /**
              * Save encryption key or create if empty
@@ -225,5 +241,89 @@ class Maco_Console_Model_Installer_Console extends Mage_Install_Model_Installer_
         }
 
         return true;
+    }
+
+    /**
+     * Ensure that the admin role exists with proper permissions
+     * This is a fallback in case data updates fail
+     */
+    protected function ensureAdminRoleExists()
+    {
+        // Check if admin role already exists
+        $adminRole = Mage::getModel('admin/role')->getCollection()
+            ->addFieldToFilter('role_name', 'Administrators')
+            ->addFieldToFilter('role_type', 'G')
+            ->getFirstItem();
+
+        if (!$adminRole->getId()) {
+            // Create the admin role if it doesn't exist
+            $adminRole = Mage::getModel('admin/role')->setData([
+                'parent_id' => 0,
+                'tree_level' => 1,
+                'sort_order' => 1,
+                'role_type' => 'G',
+                'user_id' => 0,
+                'role_name' => 'Administrators',
+            ]);
+            $adminRole->save();
+
+            // Create the admin rule with full permissions
+            $adminRule = Mage::getModel('admin/rules')->setData([
+                'role_id' => $adminRole->getId(),
+                'resource_id' => 'all',
+                'privileges' => null,
+                'assert_id' => 0,
+                'role_type' => 'G',
+                'permission' => 'allow',
+            ]);
+            $adminRule->save();
+
+            Mage::log('Created admin role with ID: ' . $adminRole->getId(), Zend_Log::INFO);
+        } else {
+            // Ensure the role has proper permissions
+            $adminRule = Mage::getModel('admin/rules')->getCollection()
+                ->addFieldToFilter('role_id', $adminRole->getId())
+                ->addFieldToFilter('resource_id', 'all')
+                ->getFirstItem();
+
+            if (!$adminRule->getId()) {
+                $adminRule = Mage::getModel('admin/rules')->setData([
+                    'role_id' => $adminRole->getId(),
+                    'resource_id' => 'all',
+                    'privileges' => null,
+                    'assert_id' => 0,
+                    'role_type' => 'G',
+                    'permission' => 'allow',
+                ]);
+                $adminRule->save();
+                Mage::log('Created admin rule for existing role ID: ' . $adminRole->getId(), Zend_Log::INFO);
+            }
+        }
+    }
+
+    /**
+     * Ensure the admin user has the correct role assigned
+     *
+     * @param Mage_Admin_Model_User $user
+     */
+    protected function ensureAdminUserRole($user)
+    {
+        try {
+            // Get the admin role
+            $adminRole = Mage::getModel('admin/role')->getCollection()
+                ->addFieldToFilter('role_name', 'Administrators')
+                ->addFieldToFilter('role_type', 'G')
+                ->getFirstItem();
+
+            if ($adminRole->getId()) {
+                // Assign the admin role to the user
+                $user->setRoleIds([$adminRole->getId()])->saveRelations();
+                Mage::log('Assigned admin role ID ' . $adminRole->getId() . ' to user: ' . $user->getUsername(), Zend_Log::INFO);
+            } else {
+                Mage::log('Warning: Could not find admin role to assign to user: ' . $user->getUsername(), Zend_Log::WARN);
+            }
+        } catch (Exception $e) {
+            Mage::log('Error assigning admin role to user: ' . $e->getMessage(), Zend_Log::ERR);
+        }
     }
 }
